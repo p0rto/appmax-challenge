@@ -14,7 +14,10 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                        <div class="d-grid gap-2 col-6 mx-auto">
+                            <a class="btn btn-light" href="/products">Products</a>
+                            <a class="btn btn-dark" href="/stocks">Stock</a>
+                        </div>
                 </div>
             </div>
         </div>

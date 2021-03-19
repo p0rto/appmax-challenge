@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -14,4 +15,9 @@ class Product extends Model
         'name',
         'price'
     ];
+
+    public function stock() : HasOne
+    {
+        return $this->hasOne(Stock::class);
+    }
 }

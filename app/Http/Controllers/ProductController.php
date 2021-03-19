@@ -5,16 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateProductRequest;
 use App\Repositories\ProductRepository;
 use App\Http\Requests\StoreProductRequest;
-use Illuminate\Http\JsonResponse;
+use App\Repositories\StockRepository;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
     private $productRepository;
+    private $stockRepository;
 
-    public function __construct(ProductRepository $productRepository)
+    public function __construct(
+        ProductRepository $productRepository,
+        StockRepository $stockRepository
+    )
     {
         $this->productRepository = $productRepository;
+        $this->stockRepository = $stockRepository;
     }
 
     public function index() : View
@@ -29,42 +34,20 @@ class ProductController extends Controller
         return view('products.create');
     }
 
-    public function store(StoreProductRequest $request) : JsonResponse
+    public function store(StoreProductRequest $request)
     {
         try {
-            $newProduct = $this->productRepository->create($request->validated());
+            $this->productRepository->create($request->validated());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'New product registered.',
-                'data' => $newProduct
-            ]);
+            return redirect()->route('stocks.index')->with('status', 'Product created.');
         } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-                'data' => null
-            ]);
+            return redirect()->route('stocks.index')->withErrors(['status', $exception->getMessage()]);
         }
     }
 
-    public function show(int $id) : JsonResponse
+    public function show(int $id)
     {
-        try {
-            $product = $this->productRepository->getById($id);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Request succeed',
-                'data' => $product
-            ]);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-                'data' => $exception
-            ]);
-        }
+        return redirect()->route('products.edit', ['product' => $id]);
     }
 
     public function edit(int $id) : View
@@ -74,41 +57,26 @@ class ProductController extends Controller
         return view('products.edit')->with('product', $product);
     }
 
-    public function update(UpdateProductRequest $request, int $id) : JsonResponse
+    public function update(UpdateProductRequest $request, int $id)
     {
         try {
-            $product = $this->productRepository->updateById($id, $request->validated());
+            $this->productRepository->updateById($id, $request->validated());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Product updated',
-                'data' => $product
-            ]);
+            return redirect()->route('stocks.index')->with('status', 'Product updated.');
         } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-                'data' => $exception
-            ]);
+            return redirect()->route('stocks.index')->withErrors(['status', $exception->getMessage()]);
         }
     }
 
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id)
     {
         try {
-            $deletedProduct = $this->productRepository->deleteById($id);
+            $this->productRepository->deleteById($id);
+            $this->stockRepository->getByColumn($id, 'product_id')->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Product deleted',
-                'data' => $deletedProduct
-            ]);
+            return redirect()->route('stocks.index')->with('status', 'Product deleted.');
         } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage(),
-                'data' => $exception
-            ]);
+            return redirect()->route('stocks.index')->withErrors(['status', $exception->getMessage()]);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Stock extends Model
@@ -14,4 +15,9 @@ class Stock extends Model
         'quantity',
         'action_origin'
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }
