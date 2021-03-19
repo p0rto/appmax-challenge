@@ -31,7 +31,7 @@
                                 <a href="{{action('ProductController@edit', $product->id)}}" class="btn btn-warning">Editar</a>
                             </td>
                             <td>
-                                <form action="{{action('ProductController@destroy', $product->id)}}" method="post">
+                                <form action="{{route('products.destroy', ['product' => $product->id])}}" method="post">
                                     {{csrf_field()}} {{ method_field('delete') }}
                                     <button class="delete-item btn btn-danger" type="submit">Deletar</button>
                                 </form>

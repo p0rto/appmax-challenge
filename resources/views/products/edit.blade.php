@@ -11,7 +11,7 @@
                     </ul>
                 </div>
             @endif
-                <form method="POST" action="/products/{{$product->id}}">
+                <form method="POST" action="{{route('products.update', ['product' => $product->id])}}">
                     @method('PUT')
                     @include('products.forms._fields')
                 </form>

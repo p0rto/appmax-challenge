@@ -11,7 +11,7 @@
                     </ul>
                 </div>
             @endif
-                <form method="POST" action="/products">
+                <form method="POST" action="{{route('products.store')}}">
                     @include('products.forms._fields')
                 </form>
         </div>
