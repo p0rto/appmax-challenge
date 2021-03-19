@@ -37,11 +37,14 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         try {
-            $this->productRepository->create($request->validated());
+            $dataToStore = $request->validated();
+            $dataToStore['action_origin'] = 'system';
 
-            return redirect()->route('stocks.index')->with('status', 'Product created.');
+            $this->productRepository->create($dataToStore);
+
+            return redirect()->route('products.index')->with('status', 'Product created.');
         } catch (\Exception $exception) {
-            return redirect()->route('stocks.index')->withErrors(['status', $exception->getMessage()]);
+            return redirect()->route('products.index')->withErrors(['status', $exception->getMessage()]);
         }
     }
 
@@ -62,9 +65,9 @@ class ProductController extends Controller
         try {
             $this->productRepository->updateById($id, $request->validated());
 
-            return redirect()->route('stocks.index')->with('status', 'Product updated.');
+            return redirect()->route('products.index')->with('status', 'Product updated.');
         } catch (\Exception $exception) {
-            return redirect()->route('stocks.index')->withErrors(['status', $exception->getMessage()]);
+            return redirect()->route('products.index')->withErrors(['status', $exception->getMessage()]);
         }
     }
 
@@ -74,9 +77,9 @@ class ProductController extends Controller
             $this->productRepository->deleteById($id);
             $this->stockRepository->getByColumn($id, 'product_id')->delete();
 
-            return redirect()->route('stocks.index')->with('status', 'Product deleted.');
+            return redirect()->route('products.index')->with('status', 'Product deleted.');
         } catch (\Exception $exception) {
-            return redirect()->route('stocks.index')->withErrors(['status', $exception->getMessage()]);
+            return redirect()->route('products.index')->withErrors(['status', $exception->getMessage()]);
         }
     }
 }

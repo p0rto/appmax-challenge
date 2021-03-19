@@ -13,7 +13,8 @@ class Product extends Model
     protected $fillable = [
         'sku',
         'name',
-        'price'
+        'price',
+        'action_origin'
     ];
 
     public function stock() : HasOne

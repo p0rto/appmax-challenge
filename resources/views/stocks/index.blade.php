@@ -18,7 +18,6 @@
                         <th>Product SKU</th>
                         <th>Product Name</th>
                         <th>Quantity</th>
-                        <th>Action Origin</th>
                         <th colspan="2">Actions</th>
                     </tr>
                     </thead>
@@ -29,7 +28,6 @@
                             <td>{{ $stock->product->sku }}</td>
                             <td>{{ $stock->product->name }}</td>
                             <td>{{ $stock->quantity }}</td>
-                            <td>{{ $stock->action_origin }}</td>
                             <td>
                                 <a href="{{route('stocks.edit', ['stock' => $stock->id])}}" class="btn btn-warning">Edit</a>
                             </td>

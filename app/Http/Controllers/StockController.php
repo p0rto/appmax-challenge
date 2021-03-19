@@ -40,10 +40,7 @@ class StockController extends Controller
     public function store(StoreStockRequest $request)
     {
         try {
-            $dataToStoreNewStock = $request->validated();
-            $dataToStoreNewStock['action_origin'] = 'system';
-
-            $this->stockRepository->create($dataToStoreNewStock);
+            $this->stockRepository->create($request->validated());
 
             return redirect()->route('stocks.index')->with('status', 'New stock registered.');
         } catch (\Exception $exception) {
