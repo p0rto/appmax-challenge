@@ -40,6 +40,9 @@
                             <li class="nav-item">
                                 <a href="/stocks" class="nav-link">Stocks</a>
                             </li>
+                            <li>
+                                <a href="/reports" class="nav-link">Reports</a>
+                            </li>
                         @endauth
                     </ul>
 

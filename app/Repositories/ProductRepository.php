@@ -23,8 +23,11 @@ class ProductRepository extends BaseRepository
     public function getProductsThatAreNotOnStock() : Collection
     {
         return $this->model->select('products.*')
-            ->leftJoin('stocks', 'stocks.product_id', '=', 'products.id')
-            ->whereNull('stocks.id')
+            ->whereNotIn('products.id', function ($query) {
+                $query->select('stocks.product_id')
+                    ->from('stocks')
+                    ->whereNull('stocks.deleted_at');
+            })
             ->get();
     }
 }

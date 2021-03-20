@@ -38,7 +38,6 @@ class ProductController extends Controller
     {
         try {
             $dataToStore = $request->validated();
-            $dataToStore['action_origin'] = 'system';
 
             $this->productRepository->create($dataToStore);
 

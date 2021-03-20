@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Historic;
 use App\Http\Requests\StoreStockRequest;
 use App\Http\Requests\UpdateStockRequest;
+use App\Repositories\HistoricRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\StockRepository;
 use Illuminate\View\View;
@@ -14,13 +16,17 @@ class StockController extends Controller
 
     private $productRepository;
 
+    private $historicRepository;
+
     public function __construct(
         StockRepository $stockRepository,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        HistoricRepository $historicRepository
     )
     {
         $this->stockRepository = $stockRepository;
         $this->productRepository = $productRepository;
+        $this->historicRepository = $historicRepository;
     }
 
     public function index() : View
@@ -40,7 +46,16 @@ class StockController extends Controller
     public function store(StoreStockRequest $request)
     {
         try {
-            $this->stockRepository->create($request->validated());
+            $stock = $this->stockRepository->create($request->validated());
+
+            $historicData = [
+                'stock_id' => $stock->id,
+                'operation' => Historic::ADD_STOCK_QUANTITY_OPERATION,
+                'action_origin' => Historic::SYSTEM_ORIGIN,
+                'quantity' => $request['quantity']
+            ];
+
+            $this->historicRepository->create($historicData);
 
             return redirect()->route('stocks.index')->with('status', 'New stock registered.');
         } catch (\Exception $exception) {
@@ -64,7 +79,31 @@ class StockController extends Controller
     public function update(UpdateStockRequest $request, int $id)
     {
         try {
+            $stock = $this->stockRepository->getById($id);
+
             $this->stockRepository->updateById($id, $request->validated());
+
+            if ($stock->quantity < $request['quantity']) {
+                $increasedQuantity = $request['quantity'] - $stock->quantity;
+
+                $historicData = [
+                    'stock_id' => $stock->id,
+                    'operation' => Historic::ADD_STOCK_QUANTITY_OPERATION,
+                    'action_origin' => Historic::SYSTEM_ORIGIN,
+                    'quantity' => $increasedQuantity
+                ];
+            } else {
+                $decreasedQuantity = $stock->quantity - $request['quantity'];
+
+                $historicData = [
+                    'stock_id' => $stock->id,
+                    'operation' => Historic::REMOVE_STOCK_QUANTITY_OPERATION,
+                    'action_origin' => Historic::SYSTEM_ORIGIN,
+                    'quantity' => $decreasedQuantity
+                ];
+            }
+
+            $this->historicRepository->create($historicData);
 
             return redirect()->route('stocks.index')->with('status', 'Stock updated.');
         } catch (\Exception $exception) {
@@ -75,7 +114,18 @@ class StockController extends Controller
     public function destroy(int $id)
     {
         try {
+            $stock = $this->stockRepository->getById($id);
+
             $this->stockRepository->deleteById($id);
+
+            $historicData = [
+                'stock_id' => $stock->id,
+                'operation' => Historic::REMOVE_STOCK_QUANTITY_OPERATION,
+                'action_origin' => Historic::SYSTEM_ORIGIN,
+                'quantity' => $stock->quantity
+            ];
+
+            $this->historicRepository->create($historicData);
 
             return redirect()->route('stocks.index')->with('status', 'Stock deleted.');
         } catch (\Exception $exception) {

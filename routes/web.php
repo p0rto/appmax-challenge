@@ -23,4 +23,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::resource('products', 'ProductController');
     Route::resource('stocks', 'StockController');
+    Route::get('/reports', 'ReportsController@index');
+    Route::get('/reports/added-products', 'ReportsController@addedProducts');
+    Route::get('/reports/removed-products', 'ReportsController@removedProducts');
 });

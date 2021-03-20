@@ -18,6 +18,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/adicionar-produtos', 'ApiProductController@create');
-Route::delete('/baixar-produtos', 'ApiProductController@destroy');
-
+Route::put('/baixar-produtos', 'ApiProductController@decreaseQuantity');
+Route::put('/adicionar-produtos', 'ApiProductController@increaseQuantity');

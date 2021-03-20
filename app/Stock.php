@@ -3,7 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Stock extends Model
@@ -15,8 +16,13 @@ class Stock extends Model
         'quantity'
     ];
 
-    public function product()
+    public function product() : BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function historic() : HasMany
+    {
+        return $this->hasMany(Historic::class);
     }
 }
