@@ -17,7 +17,6 @@
                         <th>SKU</th>
                         <th>Name</th>
                         <th>Price</th>
-                        <th>Action Origin</th>
                         <th>Stock Actions</th>
                         <th colspan="2">Product Actions</th>
                     </tr>
@@ -28,7 +27,6 @@
                             <td><a href="products/{{ $product->id }}/edit">{{ $product->sku }}</a></td>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->price }}</td>
-                            <td>{{ $product->action_origin }}</td>
                             <td>
                                 @if(isset($product->stock))
                                     <a href="{{route('stocks.edit', $product->stock->id)}}" class="btn btn-info">Edit Stock</a>
