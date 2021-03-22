@@ -1,61 +1,83 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Appmax Challenge
+Sistema de Gerenciamento de Estoque, simples e fácil.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+### Versões
+- Laravel: 7.30.4
+- PHP: 7.2.19
+- MySQL: 5.7.24
 
-## About Laravel
+### Instalando
+Após clonar o projeto, rodar os comandos ``npm install`` e ``composer install`` para instalação das dependências.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Iniciando o projeto
+Crie um arquivo ``.env`` na raiz do projeto, colando o conteúdo que está dentro do arquivo ``.env.example`` e rode o comando ``php artisan key:generate`` para gerar a chave do projeto.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Migrations e Seeds
+Para criar e popular as estruturas do banco de dados, rode os comandos ``php artisan migrate`` e ``php artisan db:seed``.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Tabelas do Banco de Dados
+#### products
+- id: BIGINT,
+- sku: VARCHAR/255,
+- name: VARCHAR/255,
+- price: DOUBLE,
+- created_at: TIMESTAMP,
+- updated_at: TIMESTAMP,
+- deleted_at: TIMESTAMP
 
-## Learning Laravel
+### stocks
+- id: BIGINT,
+- product_id: BIGINT FK (products),
+- quantity: INT,
+- created_at: TIMESTAMP,
+- updated_at: TIMESTAMP,
+- deleted_at: TIMESTAMP
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### historics
+- id: BIGINT,
+- stock_id: BIGINT FK (stocks),
+- operation: TINYINT,
+- action_origin: TINYINT,
+- created_at: TIMESTAMP,
+- updated_at: TIMESTAMP,
+- deleted_at: TIMESTAMP
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Login
+Após as seeds rodarem, será criado, na tabela ``users`` um único usuário que será utilizado para logar no sistema. O e-mail será <b>testeappmax@appmax.com</b> e a senha <b>appmax</b>
 
-## Laravel Sponsors
+### Funcionalidades
+O sistema consiste basicamente de três entidades: ``Produtos``, ``Estoques`` e ``Historicos``.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+#### Produtos
+Na tela de produtos, é possível criar/editar/deletar itens que poderão ser adicionados ao estoque. Os SKU's são únicos.
 
-### Premium Partners
+#### Estoques
+Na tela de estoques, são listados todos os produtos que estão em estoque, juntamente com a quantidade em estoque. É possível criar novos estoques para produtos ainda não estão em estoque, assim como deletar um estoque ou editar sua quantidade e/ou produto relacionado.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+#### Historicos/Relatorios
+Existem dois relatórios no sistema, o primeiro mostrando todas as entradas/adições nos estoques, e o segundo todas as saídas/diminuições nos estoques.
 
-## Contributing
+##### Adições
+Cada vez que um novo estoque é criado, é gravado um registro na tabela de historicos, constando o id do estoque e a quantidade adicionada, juntamente com a ``operation`` de adição relacionada, e a ``action_origin`` de sistema ou API, a depender da origem da ação. Se uma edição for feita no estoque, aumentando essa quantidade inicial, será criado um novo registro na tabela de historicos, informando essa diferença adicionada.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+##### Remoções
+Se um estoque for deletado, será criado um registro na tabela de historicos, constando o id do estoque e a quantidade total retirada, juntamente com a ``operation`` de remoção relacionada, e a ``action_origin`` de sistema ou API, a depender da origem da ação. Se o estoque for editado, e a sua quantidade for menor do que a atual, o mesmo processo será gravado na tabela de historicos.
 
-## Code of Conduct
+### API
+Existem duas rotas disponíveis, abertas, que irão interagir com o estoque:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### /api/decrease-stock (PUT)
+A chamada irá diminuir a quantidade em um determinado estoque. Esta rota espera, no body da requisição, 2 parâmetros obrigatórios: ``sku`` e ``quantity``. O SKU informado precisa ser valido (de um produto existente) e este produto deve estar vinculado a um estoque. A quantidade informada não pode ser maior do que a quantidade em estoque.
+- Exemplo de requisição:
+- ![image](https://user-images.githubusercontent.com/70228491/111939831-0e11fd00-8aac-11eb-838f-75ff0fedd5cb.png)
+- Exemplo de resposta:
+- ![image](https://user-images.githubusercontent.com/70228491/111939870-2255fa00-8aac-11eb-8144-dc6b31bc3973.png)
 
-## Security Vulnerabilities
+#### /api/increase-stock (PUT)
+A chamada irá diminuir a quantidade em um determinado estoque. Esta rota espera, no body da requisição, 2 parâmetros: ``sku`` e ``quantity``. O SKU informado precisa ser valido (de um produto existente) e este produto deve estar vinculado a um estoque.
+- Exemplo de requisição:
+- ![image](https://user-images.githubusercontent.com/70228491/111939956-55988900-8aac-11eb-80c9-2e0691a481f0.png)
+- Exemplo de resposta:
+- ![image](https://user-images.githubusercontent.com/70228491/111939985-63e6a500-8aac-11eb-8602-ff4beb240968.png)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
