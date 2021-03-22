@@ -18,7 +18,7 @@
                     <tbody>
                     @foreach($historic as $historic)
                         <tr>
-                            <td><a href="/stocks/{{ $historic->stock->id }}/edit">{{ $historic->stock->product->sku }}</a>
+                            <td>{{ $historic->stock->product->sku }}
                                 @if($historic->stock->quantity < 100)
                                     <p class="text-danger">Low stock!</p>
                                 @endif

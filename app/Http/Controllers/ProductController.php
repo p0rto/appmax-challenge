@@ -12,14 +12,17 @@ class ProductController extends Controller
 {
     private $productRepository;
     private $stockRepository;
+    private $stockController;
 
     public function __construct(
         ProductRepository $productRepository,
-        StockRepository $stockRepository
+        StockRepository $stockRepository,
+        StockController $stockController
     )
     {
         $this->productRepository = $productRepository;
         $this->stockRepository = $stockRepository;
+        $this->stockController = $stockController;
     }
 
     public function index() : View
@@ -73,8 +76,13 @@ class ProductController extends Controller
     public function destroy(int $id)
     {
         try {
+            $stock = $this->stockRepository->getByColumn($id, 'product_id');
+
+            if ($stock) {
+                $this->stockController->destroy($stock->id);
+            }
+
             $this->productRepository->deleteById($id);
-            $this->stockRepository->getByColumn($id, 'product_id')->delete();
 
             return redirect()->route('products.index')->with('status', 'Product deleted.');
         } catch (\Exception $exception) {

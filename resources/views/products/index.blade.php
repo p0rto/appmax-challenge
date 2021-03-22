@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             @include('layouts.flash')
-            <h2>Produtos</h2>
+            <h2>Products</h2>
             <div class="col-md-6">
                 <a href="products/create" class="btn btn-primary">
                     New Product
@@ -39,7 +39,7 @@
                                 <form action="{{route('products.destroy', ['product' => $product->id])}}" method="post">
                                     @csrf
                                     @method('delete')
-                                    <button class="delete-item btn btn-danger" type="submit">Deletar</button>
+                                    <button class="delete-item btn btn-danger" type="submit">Delete</button>
                                 </form>
                             </td>
                         </tr>

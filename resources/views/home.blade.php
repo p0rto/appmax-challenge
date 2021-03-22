@@ -1,26 +1,31 @@
 @extends('layouts.app')
-
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                        <div class="d-grid gap-2 col-6 mx-auto">
-                            <a class="btn btn-light" href="/products">Products</a>
-                            <a class="btn btn-dark" href="/stocks">Stock</a>
-                        </div>
-                </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Page</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row"><a class="btn btn-primary" href="/products">Products</a></th>
+                        <td>Add, edit or remove products.</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><a class="btn btn-primary" href="/stocks">Stocks</a></th>
+                        <td>Add, edit or remove stocks.</td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><a class="btn btn-primary" href="/reports">Reports</a></th>
+                        <td>Reports with the history of movements in the stock.</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
 @endsection

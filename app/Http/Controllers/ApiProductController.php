@@ -110,7 +110,13 @@ class ApiProductController extends Controller
             throw new \Exception($validator->errors()->first());
         }
 
-        $stock = $this->productRepository->getByColumn($requestData['sku'], 'sku')->stock;
+        $product = $this->productRepository->getByColumn($requestData['sku'], 'sku');
+
+        if (!$product) {
+            throw new \Exception('There are no products for this SKU.');
+        }
+
+        $stock = $product->stock;
 
         if (!$stock) {
             throw new \Exception('Product is not on stock.');

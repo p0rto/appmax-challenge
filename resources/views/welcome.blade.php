@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="links">
-                    <a href="https://github.com/p0rto/appmax-challenge">GitHub</a>
+                    <a href="https://github.com/p0rto/appmax-challenge" target="_blank">GitHub</a>
                 </div>
             </div>
         </div>
